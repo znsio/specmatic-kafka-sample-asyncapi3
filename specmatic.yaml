@@ -1,4 +1,0 @@
-sources:
-  - provider: "filesystem"
-    provides:
-      - "api-specifications/order-service-async-v3_0_0.yaml"
