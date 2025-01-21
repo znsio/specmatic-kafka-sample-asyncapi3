@@ -1,0 +1,25 @@
+{
+  "receive": {
+    "topic": "place-order",
+    "payload": {
+      "id": 1,
+      "orderItems": [
+        {
+          "id": 1,
+          "name": "Macbook",
+          "quantity": 50,
+          "price": 6000.00
+        }
+      ]
+    }
+  },
+  "send" : [
+    {
+      "topic": "process-order",
+      "payload": {
+        "totalAmount": 300000.00,
+        "status": "PROCESSED"
+      }
+    }
+  ]
+}

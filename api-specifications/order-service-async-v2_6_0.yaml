@@ -1,0 +1,132 @@
+asyncapi: 2.6.0
+info:
+  title: Order API
+  version: '1.0.0'
+channels:
+  place-order:
+    publish:
+      operationId: placeOrder
+      message:
+        $ref: "#/components/messages/OrderRequest"
+  process-order:
+    subscribe:
+      operationId: processOrder
+      message:
+        $ref: "#/components/messages/Order"
+  cancel-order:
+    publish:
+      operationId: cancelOrder
+      message:
+        $ref: "#/components/messages/CancelOrderRequest"
+  process-cancellation:
+    subscribe:
+      operationId: processCancellation
+      message:
+        $ref: "#/components/messages/CancellationReference"
+
+components:
+  messages:
+    OrderRequest:
+      name: OrderRequest
+      title: An order request
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - orderItems
+        properties:
+          orderItems:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                quantity:
+                  type: integer
+                price:
+                  type: number
+              required:
+                - id
+                - name
+                - quantity
+                - price
+      examples:
+        - name: NEW_ORDER
+          payload:
+            orderItems:
+              - id: 1
+                name: "Macbook"
+                quantity: 1
+                price: 2000
+              - id: 2
+                name: "Iphone"
+                quantity: 1
+                price: 1000
+    Order:
+      name: OrderToProcess
+      title: An order that needs to be processed
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - id
+          - totalAmount
+          - status
+        properties:
+          id:
+            type: integer
+          totalAmount:
+            type: number
+          status:
+            type: string
+            enum:
+              - NEW
+              - INPROGRESS
+              - PROCESSED
+              - FAILED
+      examples:
+        - name: NEW_ORDER
+          payload:
+            id: 10
+            totalAmount: 3000
+            status: "PROCESSED"
+    CancelOrderRequest:
+      name: CancelOrderRequest
+      title: A cancel order request
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - id
+        properties:
+          id:
+            type: integer
+      examples:
+        - name: CANCEL_ORDER
+          payload:
+            id: 10
+    CancellationReference:
+      name: CancellationReference
+      title: A cancellation reference in response to a cancel order request
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - reference
+          - status
+        properties:
+          reference:
+            type: integer
+          status:
+            type: string
+            enum:
+              - COMPLETED
+              - FAILED
+      examples:
+        - name: CANCEL_ORDER
+          payload:
+            reference: 345
+            status: COMPLETED
