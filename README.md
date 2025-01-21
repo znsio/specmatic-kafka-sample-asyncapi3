@@ -17,9 +17,10 @@ Thereby it demonstrates the [request reply pattern](https://www.asyncapi.com/doc
 ## Pre-requisites
 * Gradle
 * JDK 17+
-* Docker
 
 ## Run the tests
 ```shell
 ./gradlew clean test
 ```
+
+You will now see a detailed HTML report in `build/reports/index.html` with the messages that were sent and received as part of the contract tests.
