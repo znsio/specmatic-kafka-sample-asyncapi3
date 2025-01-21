@@ -9,7 +9,7 @@ docker compose down && docker compose up
 
 ### Run the application
 ```shell
-./gradlew bootRun 
+./gradlew clean bootRun 
 ```
 
 ### Run AsyncAPI 2.6 spec as a contract test for `request-reply` pattern
@@ -36,4 +36,14 @@ specmatic-kafka test ./api-specifications/order-service-async-v2_6_0.yaml
 ## Run AsyncAPI 3.0 spec as a contract test for `request-reply` pattern
 ```shell
 specmatic-kafka test ./api-specifications/order-service-async-v3_0_0.yaml
+```
+
+## KCat command to watch the process-cancellation topic 
+```shell
+kcat -b localhost:9092 -t process-cancellation
+```
+
+## KCat command to post a message to the cancel-process topic
+```shell
+echo '{"id": 10}' | kcat -P -b localhost:9092 -t cancel-order
 ```
