@@ -4,7 +4,7 @@
 
 ### Start Kafka Broker
 ```shell
-docker compose up
+docker compose down && docker compose up
 ```
 
 ### Run the application
@@ -33,3 +33,7 @@ specmatic-kafka virtualize ./api-specifications/order-service-async-v3_0_0.yaml
 specmatic-kafka test ./api-specifications/order-service-async-v2_6_0.yaml
 ```
 
+## Run AsyncAPI 3.0 spec as a contract test for `request-reply` pattern
+```shell
+specmatic-kafka test ./api-specifications/order-service-async-v3_0_0.yaml
+```
