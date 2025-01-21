@@ -38,11 +38,11 @@
         {
           "name": "specmatic-kafka-0.24.0-TRIAL.jar",
           "url": "specmatic-kafka-0.24.0-TRIAL.jar",
-          "size": 593042,
-          "sha512": "c1890e74f1963a55493baf397f703d299d63c62ccac35383eccab67ddd71ff883e8628d682c55a627bb98f2db368156c7303678d3a686046a28be1711d57fcfd",
-          "sha256": "e1f05aa04f4031de51d6efcec55cf332ee0ea2032f3ed6de3a1db41634192898",
-          "sha1": "00306cb0a9a152b500e20b5b8f240962eef706bb",
-          "md5": "c28da71bc64595046e29ffa5fdd14796"
+          "size": 592835,
+          "sha512": "6e58d0c71795e9ac905800d36e5517ccdb83699f9fba75f5198efb96bb76381d1b43cee28edca4f5f59de9b53ef5dec8fb5f1b5f0bf2f1feaf56f30bd2a02650",
+          "sha256": "14e4f63800753e6ac101fcf49bbcc66e6b76268b3fad42e5adcb2d6f232eb1ed",
+          "sha1": "9536b9bbf0bf2129168091f5a0d22f4ff852fd27",
+          "md5": "5869665ebc3bbd559d4dace02395fc23"
         }
       ]
     },
@@ -259,11 +259,11 @@
         {
           "name": "specmatic-kafka-0.24.0-TRIAL.jar",
           "url": "specmatic-kafka-0.24.0-TRIAL.jar",
-          "size": 593042,
-          "sha512": "c1890e74f1963a55493baf397f703d299d63c62ccac35383eccab67ddd71ff883e8628d682c55a627bb98f2db368156c7303678d3a686046a28be1711d57fcfd",
-          "sha256": "e1f05aa04f4031de51d6efcec55cf332ee0ea2032f3ed6de3a1db41634192898",
-          "sha1": "00306cb0a9a152b500e20b5b8f240962eef706bb",
-          "md5": "c28da71bc64595046e29ffa5fdd14796"
+          "size": 592835,
+          "sha512": "6e58d0c71795e9ac905800d36e5517ccdb83699f9fba75f5198efb96bb76381d1b43cee28edca4f5f59de9b53ef5dec8fb5f1b5f0bf2f1feaf56f30bd2a02650",
+          "sha256": "14e4f63800753e6ac101fcf49bbcc66e6b76268b3fad42e5adcb2d6f232eb1ed",
+          "sha1": "9536b9bbf0bf2129168091f5a0d22f4ff852fd27",
+          "md5": "5869665ebc3bbd559d4dace02395fc23"
         }
       ]
     },

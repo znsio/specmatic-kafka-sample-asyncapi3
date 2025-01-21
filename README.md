@@ -3,14 +3,16 @@
 * [Specmatic Website](https://specmatic.io)
 * [Specmatic Documenation](https://specmatic.io/documentation.html)
 
-This sample project demonstrates how we can run contract tests against a service which interacts with a kafka broker. 
+This sample project demonstrates how we can run contract tests against a service which interacts with a kafka broker.
+
+Here we are using [AsyncAPI 3.0.0 specification](https://www.asyncapi.com/docs/reference/specification/v3.0.0). For equivalent [AsyncAPI 2.6.0 API specification](https://www.asyncapi.com/blog/release-notes-2.6.0) based implementation, please refer to [this repository](https://github.com/znsio/specmatic-kafka-sample).
 
 ## Background
-This project includes a consumer that listens to messages on a specific topic.
-Upon receiving a message, the consumer processes it and publishes a new message to two other designated topics.
+
+This project includes a consumer that listens to messages on receive topic for requests and then upon receiving a message, it processes the same and publishes a reply message to send topic.
+Thereby it demonstrates the [request reply pattern](https://www.asyncapi.com/docs/tutorials/getting-started/request-reply) in AsyncAPI 3.0.0 specification also.
 
 ![Specmatic Kafka Sample Architecture](AsyncAPI-Request-Reply-Draft.gif)
-
 
 ## Pre-requisites
 * Gradle
@@ -20,44 +22,4 @@ Upon receiving a message, the consumer processes it and publishes a new message 
 ## Run the tests
 ```shell
 ./gradlew clean test
-```
-
-## Run the contract tests using specmatic-kafka docker image 
-
-1. Start the kafka broker using Specmatic's Kafka Mock. [Note - You can use any kafka broker other than this too.]
-    ```shell
-    docker run -p 9092:9092 -p 2181:2181 -p 29092:29092 -v "$PWD/specmatic.yaml:/usr/src/app/specmatic.yaml" znsio/specmatic-kafka-trial virtualize
-    ```
-   Alternatively if you want to use a standard Kafka Docker image you can run below command.
-   ```shell
-   docker compose up
-   ```
-2. Run the application.
-   ```shell
-   ./gradlew bootRun
-   ```
-3. Run the contract tests.
-   ```shell
-   docker run --network="host" -v "$PWD/specmatic.yaml:/usr/src/app/specmatic.yaml" -v "$PWD/src/test/resources:/usr/src/app/examples" znsio/specmatic-kafka-trial test --examples=examples
-   ```
-
-## Get information around other CLI args exposed by specmatic-kafka docker image
-
-1. To get information around all the CLI args of the `virtualize` command, run the following.
-   ```shell
-   docker run znsio/specmatic-kafka-trial virtualize --help
-   ```
-2. To get information around all the CLI args of the `test` command, run the following.
-   ```shell
-   docker run znsio/specmatic-kafka-trial test --help
-   ```
-
-## Docker commands to run the contract tests using specmatic-kafka docker image
-
-```shell
-docker run --network host -p 9092:9092 -p 2181:2181 -p 29092:29092 -v "$PWD/api-specifications/order-service-async-v3_0_0.yaml:/usr/src/app/order-service-async-v3_0_0.yaml" znsio/specmatic-kafka virtualize /usr/src/app/order-service-async-v3_0_0.yaml
-```
-
-```shell
-docker run --network host -v "$PWD/api-specifications/order-service-async-v3_0_0.yaml:/usr/src/app/order-service-async-v3_0_0.yaml" znsio/specmatic-kafka test /usr/src/app/order-service-async-v3_0_0.yaml
 ```

@@ -21,7 +21,6 @@ class ContractTest : SpecmaticKafkaContractTest {
         @JvmStatic
         @BeforeAll
         fun setup() {
-            System.setProperty(EXAMPLES_DIR, "src/test/resources")
             System.setProperty(CONSUMER_GROUP_ID, "order-consumer-group-id")
             kafkaMock = KafkaMock.startInMemoryBroker(IN_MEMORY_BROKER_HOST, IN_MEMORY_BROKER_PORT)
             startApplication()

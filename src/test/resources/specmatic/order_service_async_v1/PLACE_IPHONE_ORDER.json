@@ -2,13 +2,12 @@
   "receive": {
     "topic": "place-order",
     "payload": {
-      "id": 1,
       "orderItems": [
         {
           "id": 1,
           "name": "iPhone",
           "quantity": 10,
-          "price": 5000.00
+          "price": 5000
         }
       ]
     }
@@ -17,7 +16,8 @@
     {
       "topic": "process-order",
       "payload": {
-        "totalAmount": 50000.00,
+        "id": 1,
+        "totalAmount": 50000,
         "status": "PROCESSED"
       }
     }
