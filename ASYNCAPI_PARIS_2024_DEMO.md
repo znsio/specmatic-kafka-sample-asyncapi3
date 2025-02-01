@@ -1,5 +1,9 @@
 # AsyncAPI Paris 2024
 
+[![Contract-Driven Development for Event-Driven Architecture](https://img.youtube.com/vi/zF88Bn1o-d0/maxresdefault.jpg)](https://www.youtube.com/watch?v=zF88Bn1o-d0)
+
+Below are the instructions from the demo at AsyncAPI Paris 2024.
+
 ## Request Reply Pattern with AsyncAPI 2.6
 
 ### Start Kafka Broker
