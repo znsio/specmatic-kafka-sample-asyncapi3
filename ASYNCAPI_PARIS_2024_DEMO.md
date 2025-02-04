@@ -27,6 +27,10 @@ Note: Please stop the Kafka broker and the application after before moving to th
 
 ## Convert AsyncAPI 2.6 to AsyncAPI 3.0
 
+Install the `asyncapi` CLI tool [https://www.asyncapi.com/tools/cli](https://www.asyncapi.com/tools/cli) if you do not already have it.
+
+Use the same to convert the `order-service-async-v2_6_0.yaml` to `order-service-async-v3_0_0.yaml` as shown below:
+
 ```shell
 asyncapi convert ./api-specifications/order-service-async-v2_6_0.yaml > ./api-specifications/order-service-async-v3_0_0.yaml
 ```
