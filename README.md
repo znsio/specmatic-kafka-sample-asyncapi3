@@ -59,5 +59,5 @@ docker run --network host -p 9092:9092 -p 2181:2181 -p 29092:29092 -v "$PWD/api-
 ```
 
 ```shell
-docker run --network host -v "$PWD/api-specifications/order-service-async-v3_0_0.yaml:/usr/src/app/order-service-async-v3_0_0.yaml" znsio/specmatic-kafka test /usr/src/app/order-service-async-v3_0_0.yaml
+docker run --network host -v "$PWD/api-specifications/order-service-async-v3_0_0.yaml:/usr/src/app/order-service-async-v3_0_0.yaml" -v "$PWD/api-specifications/xsd:/usr/src/app/xsd" -v "$PWD/src/test/resources/specmatic:/usr/src/app/examples" znsio/specmatic-kafka-trial test /usr/src/app/order-service-async-v3_0_0.yaml --examples=/usr/src/app/examples
 ```
