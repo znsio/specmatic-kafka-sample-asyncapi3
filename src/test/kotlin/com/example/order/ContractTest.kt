@@ -1,9 +1,9 @@
 package com.example.order
 
 import io.specmatic.async.junit.SpecmaticKafkaContractTest
+import io.specmatic.async.mock.KafkaMock
 import io.specmatic.async.utils.CONSUMER_GROUP_ID
 import io.specmatic.async.utils.EXAMPLES_DIR
-import io.specmatic.kafka.mock.KafkaMock
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.boot.SpringApplication

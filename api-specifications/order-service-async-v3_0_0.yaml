@@ -53,40 +53,11 @@ components:
       title: An order request
       contentType: application/json
       payload:
-        type: object
-        required:
-          - orderItems
-        properties:
-          orderItems:
-            type: array
-            items:
-              type: object
-              properties:
-                id:
-                  type: integer
-                name:
-                  type: string
-                quantity:
-                  type: integer
-                price:
-                  type: number
-              required:
-                - id
-                - name
-                - quantity
-                - price
-      examples:
-        - name: NEW_ORDER
-          payload:
-            orderItems:
-              - id: 1
-                name: Macbook
-                quantity: 1
-                price: 2000
-              - id: 2
-                name: Iphone
-                quantity: 1
-                price: 1000
+        schemaFormat: 'application/xml'
+        schema:
+          $ref: './xsd/orderRequest.xsd'
+
+
     Order:
       name: OrderToProcess
       title: An order that needs to be processed
@@ -109,47 +80,23 @@ components:
               - INPROGRESS
               - PROCESSED
               - FAILED
-      examples:
-        - name: NEW_ORDER
-          payload:
-            id: 10
-            totalAmount: 3000
-            status: PROCESSED
     CancelOrderRequest:
       name: CancelOrderRequest
       title: A cancel order request
       contentType: application/json
       payload:
-        type: object
-        required:
-          - id
-        properties:
-          id:
-            type: integer
-      examples:
-        - name: CANCEL_ORDER
-          payload:
-            id: 10
+        schemaFormat: 'application/xml'
+        schema:
+          $ref: './xsd/cancelOrderRequest.xsd'
+
     CancellationReference:
       name: CancellationReference
       title: A cancellation reference in response to a cancel order request
       contentType: application/json
       payload:
-        type: object
-        required:
-          - reference
-          - status
-        properties:
-          reference:
-            type: integer
-          status:
-            type: string
-            enum:
-              - COMPLETED
-              - FAILED
-      examples:
-        - name: CANCEL_ORDER
-          payload:
-            reference: 345
-            status: COMPLETED
+        schemaFormat: 'application/xml'
+        schema:
+          $ref: './xsd/cancellationReference.xsd'
+
+
 

@@ -1,0 +1,6 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Wed Feb 19 15:50:21 IST 2025
+asyncapi-core-1.0.0-RC3-javadoc.jar>=
+asyncapi-core-1.0.0-RC3-sources.jar>=
+asyncapi-core-1.0.0-RC3.jar>=
+asyncapi-core-1.0.0-RC3.pom>=

@@ -1,7 +1,10 @@
 package com.example.order
 
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.dataformat.xml.XmlMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.core.KafkaTemplate
@@ -47,14 +50,16 @@ class OrderService(
                 println("[$SERVICE_NAME] Headers: ${headers.joinToString { "${it.key()}: ${String(it.value())}" }}")
 
                 val orderRequestJson = try {
-                    jacksonObjectMapper().apply {
-                        configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true)
-                    }.readValue(orderRequest, OrderRequest::class.java)
+                    XmlMapper().apply {
+                        registerKotlinModule()
+                    }.readValue(orderRequest, OrderRequestWrapper::class.java)
                 } catch(e: Exception) {
+                    println("[$SERVICE_NAME] Some error occurred while mapping orderRequest to OrderRequest class: $e.message")
                     throw e
                 }
 
-                processPlaceOrderMessage(orderRequestJson)
+                println("[$SERVICE_NAME] Processing the place-order request: $orderRequestJson")
+                processPlaceOrderMessage(orderRequestJson.OrderRequest)
             }
             CANCEL_ORDER_TOPIC -> {
                 val cancellationRequest = record.value()
@@ -89,7 +94,7 @@ class OrderService(
     }
 
     private fun sendMessageOnProcessCancellationTopic(orderIdObject: OrderId) {
-        val reference = 345
+        val reference = orderIdObject.id
         val cancellationMessage = """{"reference": $reference, "status": "$CANCELLATION_COMPLETED"}"""
 
         println("[$SERVICE_NAME] Publishing a message on $PROCESS_CANCELLATION_TOPIC topic: $cancellationMessage")
@@ -109,7 +114,12 @@ class OrderService(
         println("[$SERVICE_NAME] Publishing a message on $NOTIFICATION_TOPIC topic: $message")
         kafkaTemplate.send(NOTIFICATION_TOPIC, message)
     }
+
 }
+
+data class OrderRequestWrapper(
+    val OrderRequest: OrderRequest
+)
 
 data class OrderRequest(
     val orderItems: List<OrderItem>
