@@ -5,6 +5,20 @@
 
 This sample project demonstrates how we can run contract tests against a service which interacts with a kafka broker. 
 
+## Running the Sample Project with Docker
+1. Start Kafka broker.
+   ```shell
+   docker compose up
+   ```
+2. Run the application.
+   ```shell
+   ./gradlew bootRun
+   ```
+3. Run the contract tests.
+   ```shell
+   docker run --network host -v "$PWD/api-specifications/order-service-async-v3_0_0.yaml:/usr/src/app/order-service-async-v3_0_0.yaml" -v "$PWD/api-specifications/xsd:/usr/src/app/xsd" -v "$PWD/src/test/resources/specmatic:/usr/src/app/examples" znsio/specmatic-kafka-trial test /usr/src/app/order-service-async-v3_0_0.yaml --examples=/usr/src/app/examples
+   ```
+
 ## Background
 This project includes a consumer that listens to messages on a specific topic.
 Upon receiving a message, the consumer processes it and publishes a new message to two other designated topics.
@@ -38,7 +52,7 @@ Upon receiving a message, the consumer processes it and publishes a new message 
    ```
 3. Run the contract tests.
    ```shell
-   docker run --network="host" -v "$PWD/specmatic.yaml:/usr/src/app/specmatic.yaml" -v "$PWD/src/test/resources:/usr/src/app/examples" znsio/specmatic-kafka-trial test --examples=examples
+   docker run --network host -v "$PWD/api-specifications/order-service-async-v3_0_0.yaml:/usr/src/app/order-service-async-v3_0_0.yaml" -v "$PWD/api-specifications/xsd:/usr/src/app/xsd" -v "$PWD/src/test/resources/specmatic:/usr/src/app/examples" znsio/specmatic-kafka-trial test /usr/src/app/order-service-async-v3_0_0.yaml --examples=/usr/src/app/examples
    ```
 
 ## Get information around other CLI args exposed by specmatic-kafka docker image
