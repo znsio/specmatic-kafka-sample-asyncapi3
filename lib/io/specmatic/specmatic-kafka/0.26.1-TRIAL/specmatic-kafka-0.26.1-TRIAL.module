@@ -38,11 +38,11 @@
         {
           "name": "specmatic-kafka-0.26.1-TRIAL.jar",
           "url": "specmatic-kafka-0.26.1-TRIAL.jar",
-          "size": 712305,
-          "sha512": "e02cea43f60ff30118163053c217ad99de284fe015277feee59f2d7657a6f7b8584301ea7f616bb0beff6fc5efa59a98cb6254ccdb910d1f929b08de6663b183",
-          "sha256": "d1ae850e28013f616ec1a506051f8837966b6651ed1416365c38248ca111639f",
-          "sha1": "f1cebc2cc40bbcb2b3930169c7b912d9e24ffada",
-          "md5": "cfd47c66cc611904050e3f2593fd97b9"
+          "size": 607930,
+          "sha512": "3b35efc644af03b4a52d33f46edf63b4d177a3c4a455aca65f40372a935047a55acc0bd2874dc14bc4a35cfdb0e4a23738ad157aa5b95a3eafde682464ee0c7e",
+          "sha256": "247ee2ebfd5dc3bb7ce23af5a9718669e9503977375e817dc23658a69f3374e8",
+          "sha1": "0a385e77740706a70f324514a08473bb3885e389",
+          "md5": "ff3ffbea40319637926822f804038342"
         }
       ]
     },
@@ -118,7 +118,7 @@
           "group": "io.specmatic",
           "module": "specmatic-core",
           "version": {
-            "requires": "2.4.0"
+            "requires": "2.5.0"
           }
         },
         {
@@ -266,11 +266,11 @@
         {
           "name": "specmatic-kafka-0.26.1-TRIAL.jar",
           "url": "specmatic-kafka-0.26.1-TRIAL.jar",
-          "size": 712305,
-          "sha512": "e02cea43f60ff30118163053c217ad99de284fe015277feee59f2d7657a6f7b8584301ea7f616bb0beff6fc5efa59a98cb6254ccdb910d1f929b08de6663b183",
-          "sha256": "d1ae850e28013f616ec1a506051f8837966b6651ed1416365c38248ca111639f",
-          "sha1": "f1cebc2cc40bbcb2b3930169c7b912d9e24ffada",
-          "md5": "cfd47c66cc611904050e3f2593fd97b9"
+          "size": 607930,
+          "sha512": "3b35efc644af03b4a52d33f46edf63b4d177a3c4a455aca65f40372a935047a55acc0bd2874dc14bc4a35cfdb0e4a23738ad157aa5b95a3eafde682464ee0c7e",
+          "sha256": "247ee2ebfd5dc3bb7ce23af5a9718669e9503977375e817dc23658a69f3374e8",
+          "sha1": "0a385e77740706a70f324514a08473bb3885e389",
+          "md5": "ff3ffbea40319637926822f804038342"
         }
       ]
     },
