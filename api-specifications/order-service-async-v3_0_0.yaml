@@ -56,7 +56,19 @@ components:
         schemaFormat: 'application/xml'
         schema:
           $ref: './xsd/orderRequest.xsd'
-
+      examples:
+        - name: PLACE_IPHONE_ORDER
+          payload: |
+            <OrderRequest>
+              <orderItems>
+                <orderItem>
+                  <id>10</id>
+                  <name>iPhone</name>
+                  <quantity>10</quantity>
+                  <price>5000.00</price>
+                </orderItem>
+              </orderItems>
+            </OrderRequest>
 
     Order:
       name: OrderToProcess
@@ -80,6 +92,14 @@ components:
               - INPROGRESS
               - PROCESSED
               - FAILED
+
+      examples:
+        - name: PLACE_IPHONE_ORDER
+          payload:
+            id: 10
+            totalAmount: 50000.00
+            status: "PROCESSED"
+
     CancelOrderRequest:
       name: CancelOrderRequest
       title: A cancel order request
