@@ -1,7 +1,17 @@
 {
   "receive": {
     "topic": "place-order",
-    "payload": "<OrderRequest><orderItems><orderItem><id>10</id>                <name>iPhone</name>                <quantity>10</quantity>                <price>5000.00</price>            </orderItem>        </orderItems></OrderRequest>"
+    "payload": {
+      "id": 1,
+      "orderItems": [
+        {
+          "id": 1,
+          "name": "iPhone",
+          "quantity": 10,
+          "price": 5000.00
+        }
+      ]
+    }
   },
   "send" : [
     {

@@ -51,52 +51,45 @@ components:
     OrderRequest:
       name: OrderRequest
       title: An order request
-      contentType: application/json
       payload:
-        schemaFormat: 'application/xml'
+        schemaFormat: 'application/vnd.apache.avro+yaml;version=1.9.0'
         schema:
-          $ref: './xsd/orderRequest.xsd'
-
+          $ref: './avro/order-request.avsc'
 
     Order:
       name: OrderToProcess
       title: An order that needs to be processed
-      contentType: application/json
       payload:
-        type: object
-        required:
-          - id
-          - totalAmount
-          - status
-        properties:
-          id:
-            type: integer
-          totalAmount:
-            type: number
-          status:
-            type: string
-            enum:
-              - NEW
-              - INPROGRESS
-              - PROCESSED
-              - FAILED
+        schemaFormat: 'application/vnd.apache.avro+yaml;version=1.9.0'
+        schema:
+          $ref: './avro/order.avsc'
+
     CancelOrderRequest:
       name: CancelOrderRequest
       title: A cancel order request
       contentType: application/json
       payload:
-        schemaFormat: 'application/xml'
-        schema:
-          $ref: './xsd/cancelOrderRequest.xsd'
-
+        type: object
+        required:
+          - id
+        properties:
+          id:
+            type: integer
     CancellationReference:
       name: CancellationReference
       title: A cancellation reference in response to a cancel order request
       contentType: application/json
       payload:
-        schemaFormat: 'application/xml'
-        schema:
-          $ref: './xsd/cancellationReference.xsd'
-
-
+        type: object
+        required:
+          - reference
+          - status
+        properties:
+          reference:
+            type: integer
+          status:
+            type: string
+            enum:
+              - COMPLETED
+              - FAILED
 

@@ -1,0 +1,23 @@
+{
+  "type": "record",
+  "name": "Order",
+  "namespace": "com.example.order",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "totalAmount",
+      "type": "double"
+    },
+    {
+      "name": "status",
+      "type": {
+        "type": "enum",
+        "name": "OrderStatus",
+        "symbols": ["NEW", "IN_PROGRESS", "PROCESSED", "FAILED"]
+      }
+    }
+  ]
+}

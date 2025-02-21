@@ -1,0 +1,39 @@
+{
+  "type": "record",
+  "name": "OrderRequest",
+  "namespace": "com.example.order",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "orderItems",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "OrderItem",
+          "fields": [
+            {
+              "name": "id",
+              "type": "int"
+            },
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "quantity",
+              "type": "int"
+            },
+            {
+              "name": "price",
+              "type": "double"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

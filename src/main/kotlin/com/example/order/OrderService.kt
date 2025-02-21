@@ -1,8 +1,7 @@
 package com.example.order
 
 import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -22,7 +21,7 @@ private const val SERVICE_NAME = "order-service"
 
 @Service
 class OrderService(
-    private val kafkaTemplate: KafkaTemplate<String, String>
+    private val kafkaTemplate: KafkaTemplate<String, ByteArray>
 ) {
 
     init {
@@ -37,42 +36,24 @@ class OrderService(
         private const val NOTIFICATION_TOPIC = "notification"
     }
 
+
     @KafkaListener(topics = [PLACE_ORDER_TOPIC, CANCEL_ORDER_TOPIC])
-    fun placeOrder(record: ConsumerRecord<String, String>, ack: Acknowledgment) {
+    fun placeOrder(record: ConsumerRecord<String, ByteArray>, ack: Acknowledgment) {
         val topic = record.topic()
 
-        when(topic) {
+        when (topic) {
             PLACE_ORDER_TOPIC -> {
-                val orderRequest = record.value()
-                val headers = record.headers()
+                val orderRequestJson = deserialize<OrderRequest>(record.value())
 
-                println("[$SERVICE_NAME] Received message on topic $PLACE_ORDER_TOPIC - $orderRequest")
-                println("[$SERVICE_NAME] Headers: ${headers.joinToString { "${it.key()}: ${String(it.value())}" }}")
+                println("[$SERVICE_NAME] Received message on topic $PLACE_ORDER_TOPIC - $orderRequestJson")
 
-                val orderRequestJson = try {
-                    XmlMapper().apply {
-                        registerKotlinModule()
-                    }.readValue(orderRequest, OrderRequestWrapper::class.java)
-                } catch(e: Exception) {
-                    println("[$SERVICE_NAME] Some error occurred while mapping orderRequest to OrderRequest class: $e.message")
-                    throw e
-                }
-
-                println("[$SERVICE_NAME] Processing the place-order request: $orderRequestJson")
-                processPlaceOrderMessage(orderRequestJson.OrderRequest)
+                processPlaceOrderMessage(orderRequestJson)
             }
+
             CANCEL_ORDER_TOPIC -> {
-                val cancellationRequest = record.value()
+                val orderIdObject = deserialize<OrderId>(record.value())
 
-                println("[$SERVICE_NAME] Received message on topic $CANCEL_ORDER_TOPIC - $cancellationRequest")
-
-                val orderIdObject = try {
-                    jacksonObjectMapper().apply {
-                        configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true)
-                    }.readValue(cancellationRequest, OrderId::class.java)
-                } catch(e: Exception) {
-                    throw e
-                }
+                println("[$SERVICE_NAME] Received message on topic $CANCEL_ORDER_TOPIC - $orderIdObject")
 
                 processCancellation(orderIdObject)
             }
@@ -80,6 +61,7 @@ class OrderService(
 
         ack.acknowledge()
     }
+
 
     private fun processPlaceOrderMessage(orderRequest: OrderRequest) {
         sendMessageOnProcessOrderTopic(orderRequest)
@@ -93,35 +75,39 @@ class OrderService(
         sendMessageOnNotificationTopic(notificationMessage)
     }
 
-    private fun sendMessageOnProcessCancellationTopic(orderIdObject: OrderId) {
-        val reference = orderIdObject.id
-        val cancellationMessage = """{"reference": $reference, "status": "$CANCELLATION_COMPLETED"}"""
 
-        println("[$SERVICE_NAME] Publishing a message on $PROCESS_CANCELLATION_TOPIC topic: $cancellationMessage")
-        kafkaTemplate.send(PROCESS_CANCELLATION_TOPIC, cancellationMessage)
+    private fun sendMessageOnProcessCancellationTopic(orderIdObject: OrderId) {
+        val message = serialize(CancellationReference(345, CANCELLATION_COMPLETED))
+        println("[$SERVICE_NAME] Publishing a message on $PROCESS_CANCELLATION_TOPIC topic")
+        kafkaTemplate.send(PROCESS_CANCELLATION_TOPIC, message)
     }
 
     private fun sendMessageOnProcessOrderTopic(orderRequest: OrderRequest) {
-        val id = 10
         val totalAmount = orderRequest.orderItems.sumOf { it.price * BigDecimal(it.quantity) }
-        val taskMessage = """{"id": $id, "totalAmount": $totalAmount, "status": "$ORDER_STATUS_PROCESSED"}"""
+        val message = serialize(mapOf("id" to 10, "totalAmount" to totalAmount, "status" to ORDER_STATUS_PROCESSED))
 
-        println("[$SERVICE_NAME] Publishing a message on $PROCESS_ORDER_TOPIC topic: $taskMessage")
-        kafkaTemplate.send(PROCESS_ORDER_TOPIC, taskMessage)
+        println("[$SERVICE_NAME] Publishing a message on $PROCESS_ORDER_TOPIC topic")
+        kafkaTemplate.send(PROCESS_ORDER_TOPIC, message)
     }
 
     private fun sendMessageOnNotificationTopic(message: String) {
-        println("[$SERVICE_NAME] Publishing a message on $NOTIFICATION_TOPIC topic: $message")
-        kafkaTemplate.send(NOTIFICATION_TOPIC, message)
+        val messageBytes = serialize(mapOf("message" to message, "type" to NOTIFICATION_TYPE_ORDER_PLACED))
+        println("[$SERVICE_NAME] Publishing a message on $NOTIFICATION_TOPIC topic")
+        kafkaTemplate.send(NOTIFICATION_TOPIC, messageBytes)
+    }
+
+    private inline fun <reified T> deserialize(data: ByteArray): T {
+        return ObjectMapper().registerKotlinModule().readValue(data, T::class.java)
+    }
+
+    private fun serialize(data: Any): ByteArray {
+        return ObjectMapper().registerKotlinModule().writeValueAsBytes(data)
     }
 
 }
 
-data class OrderRequestWrapper(
-    val OrderRequest: OrderRequest
-)
-
 data class OrderRequest(
+    val id: Int,
     val orderItems: List<OrderItem>
 )
 
