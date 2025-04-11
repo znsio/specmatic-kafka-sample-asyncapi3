@@ -11,16 +11,10 @@ import java.math.BigDecimal
 
 private const val ORDER_STATUS_PROCESSED = "PROCESSED"
 private const val CANCELLATION_COMPLETED = "COMPLETED"
-
-private const val NOTIFICATION_TYPE_ORDER_PLACED = "ORDER_PLACED"
-private const val NOTIFICATION_TYPE_ORDER_CANCELLED = "ORDER_CANCELLED"
-
 private const val SERVICE_NAME = "order-service"
 
 @Service
-class OrderService(
-    private val kafkaTemplate: KafkaTemplate<String, String>
-) {
+class OrderService(private val kafkaTemplate: KafkaTemplate<String, String>) {
 
     init {
         println("$SERVICE_NAME started running..")
@@ -31,11 +25,10 @@ class OrderService(
         private const val PROCESS_ORDER_TOPIC = "process-order"
         private const val CANCEL_ORDER_TOPIC = "cancel-order"
         private const val PROCESS_CANCELLATION_TOPIC = "process-cancellation"
-        private const val NOTIFICATION_TOPIC = "notification"
     }
 
     @KafkaListener(topics = [PLACE_ORDER_TOPIC, CANCEL_ORDER_TOPIC])
-    fun placeOrder(record: ConsumerRecord<String, String>, ack: Acknowledgment) {
+    fun orderUpdates(record: ConsumerRecord<String, String>, ack: Acknowledgment) {
         val topic = record.topic()
 
         when(topic) {
@@ -78,40 +71,30 @@ class OrderService(
 
     private fun processPlaceOrderMessage(orderRequest: OrderRequest) {
         sendMessageOnProcessOrderTopic(orderRequest)
-        val message = """{"message": "Order processed successfully", "type": "$NOTIFICATION_TYPE_ORDER_PLACED"}"""
-        sendMessageOnNotificationTopic(message)
     }
 
     private fun processCancellation(orderIdObject: OrderId) {
         sendMessageOnProcessCancellationTopic(orderIdObject)
-        val notificationMessage = """{"message": "Order cancelled successfully", "type": "$NOTIFICATION_TYPE_ORDER_CANCELLED"}"""
-        sendMessageOnNotificationTopic(notificationMessage)
     }
 
     private fun sendMessageOnProcessCancellationTopic(orderIdObject: OrderId) {
-        val reference = 345
-        val cancellationMessage = """{"reference": $reference, "status": "$CANCELLATION_COMPLETED"}"""
+        val cancellationMessage = """{"reference": ${orderIdObject.id}, "status": "$CANCELLATION_COMPLETED"}"""
 
         println("[$SERVICE_NAME] Publishing a message on $PROCESS_CANCELLATION_TOPIC topic: $cancellationMessage")
         kafkaTemplate.send(PROCESS_CANCELLATION_TOPIC, cancellationMessage)
     }
 
     private fun sendMessageOnProcessOrderTopic(orderRequest: OrderRequest) {
-        val id = 10
         val totalAmount = orderRequest.orderItems.sumOf { it.price * BigDecimal(it.quantity) }
-        val taskMessage = """{"id": $id, "totalAmount": $totalAmount, "status": "$ORDER_STATUS_PROCESSED"}"""
+        val taskMessage = """{"id": ${orderRequest.id}, "totalAmount": $totalAmount, "status": "$ORDER_STATUS_PROCESSED"}"""
 
         println("[$SERVICE_NAME] Publishing a message on $PROCESS_ORDER_TOPIC topic: $taskMessage")
         kafkaTemplate.send(PROCESS_ORDER_TOPIC, taskMessage)
     }
-
-    private fun sendMessageOnNotificationTopic(message: String) {
-        println("[$SERVICE_NAME] Publishing a message on $NOTIFICATION_TOPIC topic: $message")
-        kafkaTemplate.send(NOTIFICATION_TOPIC, message)
-    }
 }
 
 data class OrderRequest(
+    val id: Int,
     val orderItems: List<OrderItem>
 )
 
@@ -124,9 +107,4 @@ data class OrderItem(
 
 data class OrderId(
     val id: Int
-)
-
-data class CancellationReference(
-    val reference: Int,
-    val status: String
 )
