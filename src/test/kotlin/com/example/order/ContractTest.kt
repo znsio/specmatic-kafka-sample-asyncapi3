@@ -11,7 +11,6 @@ private const val IN_MEMORY_BROKER_HOST = "localhost"
 private const val IN_MEMORY_BROKER_PORT = 9092
 
 class ContractTest : SpecmaticKafkaContractTest {
-
     companion object {
         private lateinit var context: ConfigurableApplicationContext
         private lateinit var kafkaMock: KafkaMock
@@ -40,5 +39,4 @@ class ContractTest : SpecmaticKafkaContractTest {
             context.stop()
         }
     }
-
 }
