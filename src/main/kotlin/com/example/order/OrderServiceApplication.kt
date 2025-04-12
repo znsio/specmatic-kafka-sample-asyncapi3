@@ -8,7 +8,7 @@ import org.springframework.kafka.annotation.EnableKafka
 @EnableKafka
 class OrderServiceApplication
 
-fun main() {
-    SpringApplication.run(OrderServiceApplication::class.java)
+fun main(args: Array<String>) {
+    SpringApplication.run(OrderServiceApplication::class.java, *args)
 }
 
