@@ -44,7 +44,7 @@ channels:
     messages:
       processCancellation.message:
         $ref: '#/components/messages/CancellationReference'
-  OrderNotificationSent:
+  NotifyOrderUpdates:
     address: notify-order
     messages:
       notifyOrder.message:
@@ -76,42 +76,16 @@ operations:
     action: send
     x-specmatic-trigger:
       command: >
-        curl -X POST http://localhost:9000/order/notify
+        curl -s -X POST http://localhost:9000/order/notify
         -H "Content-Type: application/json"
         -d '{"orderId":123,"event":"ORDER_PROCESSED","timestamp":"2025-04-12T14:30:00Z"}'
 #      timeout: 'P1s'
     channel:
-      $ref: '#/channels/OrderNotificationSent'
+      $ref: '#/channels/NotifyOrderUpdates'
     messages:
-      - $ref: '#/channels/OrderNotificationSent/messages/notifyOrder.message'
+      - $ref: '#/channels/NotifyOrderUpdates/messages/notifyOrder.message'
 components:
   messages:
-    NotifyOrder:
-      name: NotifyOrder
-      title: An order notification
-      contentType: application/json
-      payload:
-        type: object
-        properties:
-          orderId:
-            type: integer
-          event:
-            type: string
-            enum:
-              - ORDER_PROCESSED
-              - ORDER_CANCELLED
-          timestamp:
-            type: string
-        required:
-          - orderId
-          - event
-          - timestamp
-      examples:
-        - name: NOTIFY_ORDER
-          payload:
-            orderId: 123
-            event: ORDER_PROCESSED
-            timestamp: "2025-04-12T14:30:00Z"
     OrderRequest:
       name: OrderRequest
       title: An order request
@@ -220,3 +194,29 @@ components:
           payload:
             reference: 10
             status: COMPLETED
+    NotifyOrder:
+      name: NotifyOrder
+      title: An order notification
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          orderId:
+            type: integer
+          event:
+            type: string
+            enum:
+              - ORDER_PROCESSED
+              - ORDER_CANCELLED
+          timestamp:
+            type: string
+        required:
+          - orderId
+          - event
+          - timestamp
+      examples:
+        - name: NOTIFY_ORDER
+          payload:
+            orderId: 123
+            event: ORDER_PROCESSED
+            timestamp: "2025-04-12T14:30:00Z"

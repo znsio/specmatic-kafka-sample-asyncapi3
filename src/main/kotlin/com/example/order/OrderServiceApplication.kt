@@ -11,4 +11,3 @@ class OrderServiceApplication
 fun main(args: Array<String>) {
     SpringApplication.run(OrderServiceApplication::class.java, *args)
 }
-

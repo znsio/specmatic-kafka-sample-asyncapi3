@@ -2,7 +2,6 @@ package com.example.order
 
 import org.springframework.web.bind.annotation.*
 import org.springframework.http.ResponseEntity
-import java.time.OffsetDateTime
 
 @RestController
 @RequestMapping("/order")
@@ -12,7 +11,7 @@ class OrderNotificationController(
 
     @PostMapping("/notify")
     fun notifyOrder(@RequestBody request: NotifyOrderRequest): ResponseEntity<String> {
-        println("[order-notification-controller] Received notify request: $request")
+        println("[OrderNotificationController] Received notify request: $request")
         orderNotificationService.notify(request)
 
         return ResponseEntity.ok("Notification triggered.")

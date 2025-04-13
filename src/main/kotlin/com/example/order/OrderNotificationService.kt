@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
 
-private const val SERVICE_NAME = "order-notification-service"
+private const val SERVICE_NAME = "OrderNotificationService"
+private const val TOPIC_NAME = "notify-order"
 
 @Service
 class OrderNotificationService(
@@ -12,9 +13,9 @@ class OrderNotificationService(
 ) {
 
     fun notify(request: NotifyOrderRequest) {
-        println("[$SERVICE_NAME] Publishing the notify message on topic 'notify-order'..")
+        println("[$SERVICE_NAME] Publishing the notify message on topic '$TOPIC_NAME'..")
         kafkaTemplate.send(
-            "notify-order",
+            TOPIC_NAME,
            ObjectMapper().writeValueAsString(request)
         ).get()
     }

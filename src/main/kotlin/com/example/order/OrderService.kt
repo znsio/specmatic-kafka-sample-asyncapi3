@@ -11,20 +11,16 @@ import java.math.BigDecimal
 
 private const val ORDER_STATUS_PROCESSED = "PROCESSED"
 private const val CANCELLATION_COMPLETED = "COMPLETED"
-private const val SERVICE_NAME = "order-service"
+private const val SERVICE_NAME = "OrderService"
+private const val PLACE_ORDER_TOPIC = "place-order"
+private const val PROCESS_ORDER_TOPIC = "process-order"
+private const val CANCEL_ORDER_TOPIC = "cancel-order"
+private const val PROCESS_CANCELLATION_TOPIC = "process-cancellation"
 
 @Service
 class OrderService(private val kafkaTemplate: KafkaTemplate<String, String>) {
-
     init {
         println("$SERVICE_NAME started running..")
-    }
-
-    companion object {
-        private const val PLACE_ORDER_TOPIC = "place-order"
-        private const val PROCESS_ORDER_TOPIC = "process-order"
-        private const val CANCEL_ORDER_TOPIC = "cancel-order"
-        private const val PROCESS_CANCELLATION_TOPIC = "process-cancellation"
     }
 
     @KafkaListener(topics = [PLACE_ORDER_TOPIC, CANCEL_ORDER_TOPIC])
