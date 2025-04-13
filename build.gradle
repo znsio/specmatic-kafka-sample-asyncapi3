@@ -37,7 +37,7 @@ dependencies {
 
     testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
-    testImplementation('io.specmatic.kafka:specmatic-kafka-min:0.30.13')
+    testImplementation('io.specmatic.kafka:specmatic-kafka-min:0.31.0')
     testImplementation 'org.testcontainers:testcontainers:1.18.3'
 }
 

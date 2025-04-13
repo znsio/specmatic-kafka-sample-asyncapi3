@@ -3,12 +3,11 @@
   <groupId>io.specmatic.kafka</groupId>
   <artifactId>specmatic-kafka-min</artifactId>
   <versioning>
-    <latest>0.30.13</latest>
-    <release>0.30.13</release>
+    <latest>0.31.0</latest>
+    <release>0.31.0</release>
     <versions>
-      <version>0.30.13-SNAPSHOT</version>
-      <version>0.30.13</version>
+      <version>0.31.0</version>
     </versions>
-    <lastUpdated>20250412153701</lastUpdated>
+    <lastUpdated>20250413035507</lastUpdated>
   </versioning>
 </metadata>
