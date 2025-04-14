@@ -32,7 +32,7 @@ class ContractTest : SpecmaticKafkaContractTest {
 
         private fun startApplication() {
             context = SpringApplication.run(OrderServiceApplication::class.java)
-            Thread.sleep(5000)
+            Thread.sleep(7000)
         }
 
         private fun stopApplication() {

@@ -49,6 +49,11 @@ channels:
     messages:
       notifyOrder.message:
         $ref: '#/components/messages/NotifyOrder'
+  OrderDeliveryInitiated:
+    address: initiate-order-delivery
+    messages:
+      orderDeliveryInitiation.message:
+        $ref: '#/components/messages/OrderDeliveryInitiationTrigger'
 operations:
   placeOrder:
     action: receive
@@ -85,6 +90,16 @@ operations:
       $ref: '#/channels/NotifyOrderUpdates'
     messages:
       - $ref: '#/channels/NotifyOrderUpdates/messages/notifyOrder.message'
+  initiateOrderDelivery:
+    action: receive
+    channel:
+      $ref: '#/channels/OrderDeliveryInitiated'
+    messages:
+      - $ref: '#/channels/OrderDeliveryInitiated/messages/orderDeliveryInitiation.message'
+    x-specmatic-side-effect:
+      command: >
+        test "$(curl -s -o /dev/null -w "%{http_code}" http://localhost:9000/order/initiated-delivery/123)" = "200"
+
 components:
   messages:
     OrderRequest:
@@ -221,3 +236,28 @@ components:
             orderId: 123
             event: ORDER_PROCESSED
             timestamp: "2025-04-12T14:30:00Z"
+
+    OrderDeliveryInitiationTrigger:
+      name: OrderDeliveryInitiationTrigger
+      title: An order delivery initiation trigger
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - orderId
+          - deliveryAddress
+          - deliveryDate
+        properties:
+          orderId:
+            type: integer
+          deliveryAddress:
+            type: string
+          deliveryDate:
+            type: string
+            format: date
+      examples:
+        - name: DELIVERY_INITIATED
+          payload:
+            orderId: 123
+            deliveryAddress: "1234 Elm Street, Springfield"
+            deliveryDate: "2025-04-14"
