@@ -50,10 +50,10 @@ channels:
       notifyOrder.message:
         $ref: '#/components/messages/NotifyOrder'
   OrderDeliveryInitiated:
-    address: initiate-order-delivery
+    address: out-for-delivery
     messages:
       orderDeliveryInitiation.message:
-        $ref: '#/components/messages/OrderDeliveryInitiationTrigger'
+        $ref: '#/components/messages/OutForDelivery'
 operations:
   placeOrder:
     action: receive
@@ -83,9 +83,8 @@ operations:
       command: >
         curl -s -X PUT http://localhost:9000/orders
         -H "Content-Type: application/json"
-        -d '{"id":123,"status":"PROCESSED","timestamp":"2025-04-12T14:30:00Z"}'
-      # ISO 8601 Duration Format
-      timeout: 'PT5S'
+        -d '{"id":123,"status":"ACCEPTED","timestamp":"2025-04-12T14:30:00Z"}'
+      timeout: 'PT5S' # ISO 8601 Duration Format
     channel:
       $ref: '#/channels/NotifyOrderUpdates'
     messages:
@@ -161,18 +160,13 @@ components:
           totalAmount:
             type: number
           status:
-            type: string
-            enum:
-              - NEW
-              - INPROGRESS
-              - PROCESSED
-              - FAILED
+            $ref: '#/components/messages/OrderStatus'
       examples:
         - name: NEW_ORDER
           payload:
             id: 10
             totalAmount: 3000
-            status: PROCESSED
+            status: INITIATED
     CancelOrderRequest:
       name: CancelOrderRequest
       title: A cancel order request
@@ -201,10 +195,7 @@ components:
           reference:
             type: integer
           status:
-            type: string
-            enum:
-              - CANCELLED
-              - FAILED
+            $ref: '#/components/messages/OrderStatus'
       examples:
         - name: CANCEL_ORDER
           payload:
@@ -220,10 +211,7 @@ components:
           id:
             type: integer
           status:
-            type: string
-            enum:
-              - PROCESSED
-              - CANCELLED
+            $ref: '#/components/messages/OrderStatus'
           timestamp:
             type: string
         required:
@@ -234,12 +222,11 @@ components:
         - name: NOTIFY_ORDER
           payload:
             id: 123
-            status: PROCESSED
+            status: ACCEPTED
             timestamp: "2025-04-12T14:30:00Z"
-
-    OrderDeliveryInitiationTrigger:
-      name: OrderDeliveryInitiationTrigger
-      title: An order delivery initiation trigger
+    OutForDelivery:
+      name: OutForDelivery
+      title: Order is out for delivery
       contentType: application/json
       payload:
         type: object
@@ -256,8 +243,20 @@ components:
             type: string
             format: date
       examples:
-        - name: DELIVERY_INITIATED
+        - name: OUT_FOR_DELIVERY
           payload:
             orderId: 123
             deliveryAddress: "1234 Elm Street, Springfield"
             deliveryDate: "2025-04-14"
+    OrderStatus:
+      name: OrderStatus
+      title: Order status
+      payload:
+        type: string
+        enum:
+          - PENDING
+          - INITIATED
+          - ACCEPTED
+          - SHIPPED
+          - DELIVERED
+          - CANCELLED

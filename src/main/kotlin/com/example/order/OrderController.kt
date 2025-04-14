@@ -25,7 +25,6 @@ class OrderController(
     fun updateOrder(@RequestBody request: OrderUpdateRequest): ResponseEntity<String> {
         println("[$NAME] Received update request: $request")
         orderNotificationService.notify(request)
-
         return ResponseEntity.ok("Notification triggered.")
     }
 }

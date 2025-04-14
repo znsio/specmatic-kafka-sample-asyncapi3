@@ -1,7 +1,6 @@
 package com.example.order
 
-import com.example.order.OrderStatus.CANCELLED
-import com.example.order.OrderStatus.PROCESSED
+import com.example.order.OrderStatus.*
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -72,7 +71,7 @@ class OrderService(
         val order = Order(
             id = placeOrderRequest.id,
             orderItems = placeOrderRequest.orderItems,
-            status = PROCESSED
+            status = INITIATED
         )
         sendMessageOnProcessOrderTopic(order)
         orderRepository.save(order)
