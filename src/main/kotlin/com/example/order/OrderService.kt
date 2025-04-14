@@ -9,7 +9,6 @@ import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Service
-import java.math.BigDecimal
 
 private const val SERVICE_NAME = "OrderService"
 private const val PLACE_ORDER_TOPIC = "place-order"
@@ -107,11 +106,4 @@ class OrderService(
 data class PlaceOrderRequest(
     val id: Int,
     val orderItems: List<OrderItem>
-)
-
-data class OrderItem(
-    val id: Int,
-    val name: String,
-    val quantity: Int,
-    val price: BigDecimal
 )

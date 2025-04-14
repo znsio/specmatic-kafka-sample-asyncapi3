@@ -14,6 +14,13 @@ data class Order(
     }
 }
 
+data class OrderItem(
+    val id: Int,
+    val name: String,
+    val quantity: Int,
+    val price: BigDecimal
+)
+
 data class OrderId(
     val id: Int
 )
