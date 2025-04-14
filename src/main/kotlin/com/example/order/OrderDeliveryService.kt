@@ -8,7 +8,7 @@ import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Service
 
 private const val SERVICE_NAME = "OrderDeliveryService"
-private const val ORDER_OUT_FOR_DELIVERY_TOPIC = "out-for-delivery"
+private const val ORDER_OUT_FOR_DELIVERY_TOPIC = "out-for-delivery-orders"
 
 @Service
 class OrderDeliveryService(

@@ -5,7 +5,7 @@ import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
 
 private const val SERVICE_NAME = "OrderAcceptanceService"
-private const val TOPIC_NAME = "order-accepted"
+private const val TOPIC_NAME = "accepted-orders"
 
 @Service
 class OrderAcceptanceService(

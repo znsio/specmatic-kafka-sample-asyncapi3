@@ -10,10 +10,10 @@ import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Service
 
 private const val SERVICE_NAME = "OrderService"
-private const val PLACE_ORDER_TOPIC = "place-order"
-private const val PROCESS_ORDER_TOPIC = "process-order"
-private const val CANCEL_ORDER_TOPIC = "cancel-order"
-private const val PROCESS_CANCELLATION_TOPIC = "process-cancellation"
+private const val NEW_ORDERS_TOPIC = "new-orders"
+private const val WIP_ORDERS_TOPIC = "wip-orders"
+private const val TO_BE_CANCELLED_ORDERS_TOPIC = "to-be-cancelled-orders"
+private const val CANCELLED_ORDERS_TOPIC = "cancelled-orders"
 
 @Service
 class OrderService(
@@ -24,16 +24,16 @@ class OrderService(
         println("$SERVICE_NAME started running..")
     }
 
-    @KafkaListener(topics = [PLACE_ORDER_TOPIC, CANCEL_ORDER_TOPIC])
+    @KafkaListener(topics = [NEW_ORDERS_TOPIC, TO_BE_CANCELLED_ORDERS_TOPIC])
     fun orderUpdates(record: ConsumerRecord<String, String>, ack: Acknowledgment) {
         val topic = record.topic()
 
         when (topic) {
-            PLACE_ORDER_TOPIC -> {
+            NEW_ORDERS_TOPIC -> {
                 val orderRequest = record.value()
                 val headers = record.headers()
 
-                println("[$SERVICE_NAME] Received message on topic $PLACE_ORDER_TOPIC - $orderRequest")
+                println("[$SERVICE_NAME] Received message on topic $NEW_ORDERS_TOPIC - $orderRequest")
                 println("[$SERVICE_NAME] Headers: ${headers.joinToString { "${it.key()}: ${String(it.value())}" }}")
 
                 val placeOrderRequestJson = try {
@@ -47,10 +47,10 @@ class OrderService(
                 processPlaceOrderMessage(placeOrderRequestJson)
             }
 
-            CANCEL_ORDER_TOPIC -> {
+            TO_BE_CANCELLED_ORDERS_TOPIC -> {
                 val cancellationRequest = record.value()
 
-                println("[$SERVICE_NAME] Received message on topic $CANCEL_ORDER_TOPIC - $cancellationRequest")
+                println("[$SERVICE_NAME] Received message on topic $TO_BE_CANCELLED_ORDERS_TOPIC - $cancellationRequest")
 
                 val orderIdObject = try {
                     jacksonObjectMapper().apply {
@@ -89,16 +89,16 @@ class OrderService(
     private fun sendMessageOnProcessCancellationTopic(order: Order) {
         val cancellationMessage = """{"reference": ${order.id}, "status": "${order.status}"}"""
 
-        println("[$SERVICE_NAME] Publishing a message on $PROCESS_CANCELLATION_TOPIC topic: $cancellationMessage")
-        kafkaTemplate.send(PROCESS_CANCELLATION_TOPIC, cancellationMessage)
+        println("[$SERVICE_NAME] Publishing a message on $CANCELLED_ORDERS_TOPIC topic: $cancellationMessage")
+        kafkaTemplate.send(CANCELLED_ORDERS_TOPIC, cancellationMessage)
     }
 
     private fun sendMessageOnProcessOrderTopic(order: Order) {
         val taskMessage =
             """{"id": ${order.id}, "totalAmount": ${order.totalAmount()}, "status": "${order.status}"}"""
 
-        println("[$SERVICE_NAME] Publishing a message on $PROCESS_ORDER_TOPIC topic: $taskMessage")
-        kafkaTemplate.send(PROCESS_ORDER_TOPIC, taskMessage)
+        println("[$SERVICE_NAME] Publishing a message on $WIP_ORDERS_TOPIC topic: $taskMessage")
+        kafkaTemplate.send(WIP_ORDERS_TOPIC, taskMessage)
     }
 }
 
