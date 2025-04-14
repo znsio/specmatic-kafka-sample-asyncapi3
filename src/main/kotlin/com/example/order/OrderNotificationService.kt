@@ -12,7 +12,7 @@ class OrderNotificationService(
     private val kafkaTemplate: KafkaTemplate<String, String>
 ) {
 
-    fun notify(request: NotifyOrderRequest) {
+    fun notify(request: OrderUpdateRequest) {
         println("[$SERVICE_NAME] Publishing the notify message on topic '$TOPIC_NAME'..")
         kafkaTemplate.send(
             TOPIC_NAME,

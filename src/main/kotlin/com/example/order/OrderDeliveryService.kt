@@ -12,9 +12,8 @@ private const val INITIATE_ORDER_DELIVERY_TOPIC = "initiate-order-delivery"
 
 @Service
 class OrderDeliveryService(
-    private val orderDeliveryRepository: OrderDeliveryRepository
+    private val orderRepository: OrderRepository
 ) {
-
     init {
         println("$SERVICE_NAME started running..")
     }
@@ -39,35 +38,23 @@ class OrderDeliveryService(
             throw e
         }
 
-        orderDeliveryRepository.save(
-            OrderDelivery(
-                orderId = request.orderId,
-                deliveryAddress = request.deliveryAddress,
-                deliveryDate = request.deliveryDate,
-                deliveryStatus = DeliveryStatus.INITIATED
+        orderRepository.save(
+            Order(
+                id = request.orderId,
+                lastUpdatedDate = request.deliveryDate,
+                status = OrderStatus.SHIPPED
             )
         )
-        println("[$SERVICE_NAME] Order delivery with orderId '${request.orderId}' is initiated")
+        println("[$SERVICE_NAME] Order with orderId '${request.orderId}' is ${OrderStatus.SHIPPED}")
     }
 
-    fun findById(orderId: Int): OrderDelivery? {
-        return orderDeliveryRepository.findById(orderId)
+    fun findById(orderId: Int, status: OrderStatus): Order? {
+        return orderRepository.findById(orderId, status)
     }
-}
-
-enum class DeliveryStatus {
-    PENDING, INITIATED, SHIPPED, DELIVERED
 }
 
 data class OrderDeliveryRequest(
     val orderId: Int,
     val deliveryAddress: String,
     val deliveryDate: String
-)
-
-data class OrderDelivery(
-    val orderId: Int,
-    val deliveryAddress: String,
-    val deliveryDate: String,
-    val deliveryStatus: DeliveryStatus
 )

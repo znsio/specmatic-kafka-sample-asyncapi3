@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 @ControllerAdvice
 class GlobalExceptionHandler {
 
-    @ExceptionHandler(OrderDeliveryNotFoundException::class)
-    fun handleOrderDeliveryNotFoundException(e: OrderDeliveryNotFoundException): ResponseEntity<ErrorResponse> {
+    @ExceptionHandler(OrderNotFoundException::class)
+    fun handleOrderDeliveryNotFoundException(e: OrderNotFoundException): ResponseEntity<ErrorResponse> {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse(e.message))
     }
 
