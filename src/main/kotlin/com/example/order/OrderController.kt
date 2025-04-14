@@ -9,7 +9,7 @@ private const val NAME = "OrderController"
 @RequestMapping("/orders")
 class OrderController(
     private val orderDeliveryService: OrderDeliveryService,
-    private val orderNotificationService: OrderNotificationService
+    private val orderAcceptanceService: OrderAcceptanceService
 ) {
 
     @GetMapping("/{id}")
@@ -24,7 +24,7 @@ class OrderController(
     @PutMapping
     fun updateOrder(@RequestBody request: OrderUpdateRequest): ResponseEntity<String> {
         println("[$NAME] Received update request: $request")
-        orderNotificationService.notify(request)
+        orderAcceptanceService.notify(request)
         return ResponseEntity.ok("Notification triggered.")
     }
 }

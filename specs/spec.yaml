@@ -44,11 +44,11 @@ channels:
     messages:
       processCancellation.message:
         $ref: '#/components/messages/CancellationReference'
-  NotifyOrderUpdates:
-    address: notify-order
+  OrderAcceptedByWarehouse:
+    address: order-accepted
     messages:
-      notifyOrder.message:
-        $ref: '#/components/messages/NotifyOrder'
+      orderAccepted.message:
+        $ref: '#/components/messages/OrderAccepted'
   OrderDeliveryInitiated:
     address: out-for-delivery
     messages:
@@ -77,7 +77,7 @@ operations:
         $ref: '#/channels/OrderCancellationProcessed'
       messages:
         - $ref: '#/channels/OrderCancellationProcessed/messages/processCancellation.message'
-  notifyOrder:
+  orderAccepted:
     action: send
     x-specmatic-trigger:
       command: >
@@ -86,9 +86,9 @@ operations:
         -d '{"id":123,"status":"ACCEPTED","timestamp":"2025-04-12T14:30:00Z"}'
       timeout: 'PT5S' # ISO 8601 Duration Format
     channel:
-      $ref: '#/channels/NotifyOrderUpdates'
+      $ref: '#/channels/OrderAcceptedByWarehouse'
     messages:
-      - $ref: '#/channels/NotifyOrderUpdates/messages/notifyOrder.message'
+      - $ref: '#/channels/OrderAcceptedByWarehouse/messages/orderAccepted.message'
   initiateOrderDelivery:
     action: receive
     channel:
@@ -201,9 +201,9 @@ components:
           payload:
             reference: 10
             status: CANCELLED
-    NotifyOrder:
-      name: NotifyOrder
-      title: An order notification
+    OrderAccepted:
+      name: OrderAccepted
+      title: Order accepted by Warehouse
       contentType: application/json
       payload:
         type: object
@@ -219,7 +219,7 @@ components:
           - status
           - timestamp
       examples:
-        - name: NOTIFY_ORDER
+        - name: ACCEPT_ORDER
           payload:
             id: 123
             status: ACCEPTED
@@ -243,7 +243,7 @@ components:
             type: string
             format: date
       examples:
-        - name: OUT_FOR_DELIVERY
+        - name: ORDER_OUT_FOR_DELIVERY
           payload:
             orderId: 123
             deliveryAddress: "1234 Elm Street, Springfield"
