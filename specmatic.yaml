@@ -1,9 +1,4 @@
 sources:
   - provider: "filesystem"
     provides:
-      - "./specs/spec.yaml"
-
-#  - provider: "git"
-#    repository: "https://github.com/znsio/specmatic-order-contracts.git"
-#    provides:
-#      - "io/specmatic/examples/store/asyncapi/3_0_0/order_service_async_v2.yaml"
+      - "./specification/spec.yaml"
