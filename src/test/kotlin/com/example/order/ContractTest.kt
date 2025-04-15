@@ -18,6 +18,7 @@ class ContractTest : SpecmaticKafkaContractTest {
         @JvmStatic
         @BeforeAll
         fun setup() {
+            System.setProperty("OVERLAY_FILE", "src/test/resources/spec_overlay.yaml")
             System.setProperty("CONSUMER_GROUP_ID", "order-consumer-group-id")
             kafkaMock = KafkaMock.startInMemoryBroker(IN_MEMORY_BROKER_HOST, IN_MEMORY_BROKER_PORT)
             startApplication()
