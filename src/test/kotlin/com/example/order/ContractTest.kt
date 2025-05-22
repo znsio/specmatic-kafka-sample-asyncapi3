@@ -4,30 +4,27 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.boot.SpringApplication
-import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.boot.test.context.SpringBootTest
 import org.testcontainers.containers.BindMode
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.Network
+import org.testcontainers.containers.startupcheck.StartupCheckStrategy
 import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy
+import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
 import org.testcontainers.containers.wait.strategy.Wait
-import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
+import java.time.Duration
 
 @Testcontainers
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class ContractTest {
     companion object {
-        private lateinit var context: ConfigurableApplicationContext
-
         @JvmStatic
         @BeforeAll
         fun setup() {
-            System.setProperty("OVERLAY_FILE", "src/test/resources/spec_overlay.yaml")
-            System.setProperty("CONSUMER_GROUP_ID", "order-consumer-group-id")
             zookeeper.start()
             kafkaBroker.start()
-            startApplication()
         }
 
         @JvmStatic
@@ -35,16 +32,6 @@ class ContractTest {
         fun tearDown() {
             zookeeper.stop()
             kafkaBroker.stop()
-            stopApplication()
-        }
-
-        private fun startApplication() {
-            context = SpringApplication.run(OrderServiceApplication::class.java)
-            Thread.sleep(7000)
-        }
-
-        private fun stopApplication() {
-            context.stop()
         }
 
         private val network = Network.newNetwork()
@@ -70,17 +57,21 @@ class ContractTest {
                     com.github.dockerjava.api.model.PortBinding.parse("9092:9092")
                 )
             }
-            .waitingFor(HostPortWaitStrategy().forPorts(9092))
+            .waitingFor(
+                LogMessageWaitStrategy()
+                    .withRegEx(".*started.*kafka.server.KafkaServer.*")
+                    .withStartupTimeout(Duration.ofSeconds(30))
+            )
     }
 
-    private val testContainer: GenericContainer<*> = GenericContainer("znsio/specmatic-kafka")
+    private val specmaticKafkaTestContainer: GenericContainer<*> = GenericContainer("znsio/specmatic-kafka")
         .withCommand(
             "test",
             "--host=localhost",
             "--port=9092",
             "--overlay=spec_overlay.yaml"
             // Set the external examples directory if there are no inline examples in the spec
-            // "--examples=examples"
+            // "--examples=/path/to/examples_dir"
         )
         .withNetworkMode("host")
         .withFileSystemBind(
@@ -103,8 +94,10 @@ class ContractTest {
 
     @Test
     fun contractTests() {
-        testContainer.start()
-        val hasSucceeded = testContainer.logs.contains("Result: FAILED").not()
+        // wait for kafkaBroker to stabilize
+        Thread.sleep(5000)
+        specmaticKafkaTestContainer.start()
+        val hasSucceeded = specmaticKafkaTestContainer.logs.contains("Result: FAILED").not()
         assertThat(hasSucceeded).isTrue()
     }
 }
