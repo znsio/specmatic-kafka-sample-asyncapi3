@@ -4,6 +4,9 @@ import com.example.order.OrderStatus.*
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.common.header.internals.RecordHeader
+import org.apache.kafka.common.header.internals.RecordHeaders
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.support.Acknowledgment
@@ -87,18 +90,25 @@ class OrderService(
     }
 
     private fun sendMessageOnProcessCancellationTopic(order: Order) {
+        val headers = RecordHeaders().apply {
+            add(RecordHeader("orderCorrelationId", "12345".toByteArray()))
+        }
         val cancellationMessage = """{"reference": ${order.id}, "status": "${order.status}"}"""
+        val record = ProducerRecord<String, String>(CANCELLED_ORDERS_TOPIC, null, null, null, cancellationMessage, headers)
 
         println("[$SERVICE_NAME] Publishing a message on $CANCELLED_ORDERS_TOPIC topic: $cancellationMessage")
-        kafkaTemplate.send(CANCELLED_ORDERS_TOPIC, cancellationMessage)
+        kafkaTemplate.send(record)
     }
 
     private fun sendMessageOnProcessOrderTopic(order: Order) {
+        val headers = RecordHeaders().apply {
+            add(RecordHeader("orderCorrelationId", "12345".toByteArray()))
+        }
         val taskMessage =
             """{"id": ${order.id}, "totalAmount": ${order.totalAmount()}, "status": "${order.status}"}"""
 
-        println("[$SERVICE_NAME] Publishing a message on $WIP_ORDERS_TOPIC topic: $taskMessage")
-        kafkaTemplate.send(WIP_ORDERS_TOPIC, taskMessage)
+        val record = ProducerRecord<String, String>(WIP_ORDERS_TOPIC, null, null, null, taskMessage, headers)
+        kafkaTemplate.send(record)
     }
 }
 
