@@ -1,9 +1,7 @@
 package com.example.order
 
-import io.specmatic.async.junit.SpecmaticKafkaContractTest
-import io.specmatic.async.utils.CONSUMER_GROUP_ID
-import io.specmatic.async.utils.EXAMPLES_DIR
 import io.specmatic.kafka.mock.KafkaMock
+import io.specmatic.kafka.test.SpecmaticKafkaContractTest
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.boot.SpringApplication
@@ -21,8 +19,6 @@ class ContractTest : SpecmaticKafkaContractTest {
         @JvmStatic
         @BeforeAll
         fun setup() {
-            System.setProperty(EXAMPLES_DIR, "src/test/resources")
-            System.setProperty(CONSUMER_GROUP_ID, "order-consumer-group-id")
             kafkaMock = KafkaMock.startInMemoryBroker(IN_MEMORY_BROKER_HOST, IN_MEMORY_BROKER_PORT)
             startApplication()
         }
@@ -43,5 +39,4 @@ class ContractTest : SpecmaticKafkaContractTest {
             context.stop()
         }
     }
-
 }

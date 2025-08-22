@@ -3,9 +3,11 @@ package com.example.order
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.common.header.Headers
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.support.Acknowledgment
+import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
@@ -54,10 +56,11 @@ class OrderService(
                     throw e
                 }
 
-                processPlaceOrderMessage(orderRequestJson)
+                processPlaceOrderMessage(orderRequestJson, headers)
             }
             CANCEL_ORDER_TOPIC -> {
                 val cancellationRequest = record.value()
+                val headers = record.headers()
 
                 println("[$SERVICE_NAME] Received message on topic $CANCEL_ORDER_TOPIC - $cancellationRequest")
 
@@ -69,45 +72,79 @@ class OrderService(
                     throw e
                 }
 
-                processCancellation(orderIdObject)
+                processCancellation(orderIdObject, headers)
             }
         }
 
         ack.acknowledge()
     }
 
-    private fun processPlaceOrderMessage(orderRequest: OrderRequest) {
-        sendMessageOnProcessOrderTopic(orderRequest)
+    private fun processPlaceOrderMessage(orderRequest: OrderRequest, headers: Headers) {
+        sendMessageOnProcessOrderTopic(orderRequest, headers)
         val message = """{"message": "Order processed successfully", "type": "$NOTIFICATION_TYPE_ORDER_PLACED"}"""
-        sendMessageOnNotificationTopic(message)
+        sendMessageOnNotificationTopic(message, headers)
     }
 
-    private fun processCancellation(orderIdObject: OrderId) {
-        sendMessageOnProcessCancellationTopic(orderIdObject)
+    private fun processCancellation(orderIdObject: OrderId, headers: Headers) {
+        sendMessageOnProcessCancellationTopic(orderIdObject, headers)
         val notificationMessage = """{"message": "Order cancelled successfully", "type": "$NOTIFICATION_TYPE_ORDER_CANCELLED"}"""
-        sendMessageOnNotificationTopic(notificationMessage)
+        sendMessageOnNotificationTopic(notificationMessage, headers)
     }
 
-    private fun sendMessageOnProcessCancellationTopic(orderIdObject: OrderId) {
+    private fun sendMessageOnProcessCancellationTopic(orderIdObject: OrderId, headers: Headers) {
         val reference = 345
         val cancellationMessage = """{"reference": $reference, "status": "$CANCELLATION_COMPLETED"}"""
-
         println("[$SERVICE_NAME] Publishing a message on $PROCESS_CANCELLATION_TOPIC topic: $cancellationMessage")
-        kafkaTemplate.send(PROCESS_CANCELLATION_TOPIC, cancellationMessage)
+        val correlationId = headers.lastHeader("correlationId")?.value()?.let { String(it) }
+        if (correlationId != null) {
+            val invalidRecord = ProducerRecord<String, String>(PROCESS_CANCELLATION_TOPIC, cancellationMessage)
+            invalidRecord.headers().add("correlationId", "\"ABC\"".toByteArray())
+            println(invalidRecord.toString())
+            kafkaTemplate.send(invalidRecord)
+
+            Thread.sleep(1_000)
+            val validRecord = ProducerRecord<String, String>(PROCESS_CANCELLATION_TOPIC, cancellationMessage)
+            validRecord.headers().add("correlationId", correlationId.toByteArray())
+            println(validRecord.toString())
+            kafkaTemplate.send(validRecord)
+        }
     }
 
-    private fun sendMessageOnProcessOrderTopic(orderRequest: OrderRequest) {
+    private fun sendMessageOnProcessOrderTopic(orderRequest: OrderRequest, headers: Headers) {
         val id = 10
         val totalAmount = orderRequest.orderItems.sumOf { it.price * BigDecimal(it.quantity) }
         val taskMessage = """{"id": $id, "totalAmount": $totalAmount, "status": "$ORDER_STATUS_PROCESSED"}"""
-
         println("[$SERVICE_NAME] Publishing a message on $PROCESS_ORDER_TOPIC topic: $taskMessage")
-        kafkaTemplate.send(PROCESS_ORDER_TOPIC, taskMessage)
+        val correlationId = headers.lastHeader("correlationId")?.value()?.let { String(it) }
+        if (correlationId != null) {
+            val invalidRecord = ProducerRecord<String, String>(PROCESS_ORDER_TOPIC, taskMessage)
+            invalidRecord.headers().add("correlationId", "\"ABC\"".toByteArray())
+            println(invalidRecord.toString())
+            kafkaTemplate.send(invalidRecord)
+
+            Thread.sleep(1_000)
+            val validRecord = ProducerRecord<String, String>(PROCESS_ORDER_TOPIC, taskMessage)
+            validRecord.headers().add("correlationId", correlationId.toByteArray())
+            println(validRecord.toString())
+            kafkaTemplate.send(validRecord)
+        }
     }
 
-    private fun sendMessageOnNotificationTopic(message: String) {
+    private fun sendMessageOnNotificationTopic(message: String, headers: Headers) {
         println("[$SERVICE_NAME] Publishing a message on $NOTIFICATION_TOPIC topic: $message")
-        kafkaTemplate.send(NOTIFICATION_TOPIC, message)
+        val correlationId = headers.lastHeader("correlationId")?.value()?.let { String(it) }
+        if (correlationId != null) {
+            val invalidRecord = ProducerRecord<String, String>(NOTIFICATION_TOPIC, message)
+            invalidRecord.headers().add("correlationId", "\"ABC\"".toByteArray())
+            println(invalidRecord.toString())
+            kafkaTemplate.send(invalidRecord)
+
+            Thread.sleep(1_000)
+            val validRecord = ProducerRecord<String, String>(NOTIFICATION_TOPIC, message)
+            validRecord.headers().add("correlationId", correlationId.toByteArray())
+            println(validRecord.toString())
+            kafkaTemplate.send(validRecord)
+        }
     }
 }
 

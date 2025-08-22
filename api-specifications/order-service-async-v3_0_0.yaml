@@ -47,11 +47,28 @@ operations:
       messages:
         - $ref: '#/channels/process-cancellation/messages/processCancellation.message'
 components:
+  correlationIds:
+    orderCorrelation:
+      description: Correlation ID to correlate requests and their replies
+      location: $message.header#/correlationId
+  schemas:
+    correlationHeaders:
+      type: object
+      required:
+        - correlationId
+      properties:
+        correlationId:
+          type: string
+          description: Correlation ID to link request with response
   messages:
     OrderRequest:
       name: OrderRequest
       title: An order request
       contentType: application/json
+      correlationId:
+        $ref: "#/components/correlationIds/orderCorrelation"
+      headers:
+        $ref: '#/components/schemas/correlationHeaders'
       payload:
         type: object
         required:
@@ -75,22 +92,14 @@ components:
                 - name
                 - quantity
                 - price
-      examples:
-        - name: NEW_ORDER
-          payload:
-            orderItems:
-              - id: 1
-                name: Macbook
-                quantity: 1
-                price: 2000
-              - id: 2
-                name: Iphone
-                quantity: 1
-                price: 1000
     Order:
       name: OrderToProcess
       title: An order that needs to be processed
       contentType: application/json
+      correlationId:
+        $ref: "#/components/correlationIds/orderCorrelation"
+      headers:
+        $ref: '#/components/schemas/correlationHeaders'
       payload:
         type: object
         required:
@@ -109,16 +118,14 @@ components:
               - INPROGRESS
               - PROCESSED
               - FAILED
-      examples:
-        - name: NEW_ORDER
-          payload:
-            id: 10
-            totalAmount: 3000
-            status: PROCESSED
     CancelOrderRequest:
       name: CancelOrderRequest
       title: A cancel order request
       contentType: application/json
+      correlationId:
+        $ref: "#/components/correlationIds/orderCorrelation"
+      headers:
+        $ref: '#/components/schemas/correlationHeaders'
       payload:
         type: object
         required:
@@ -126,14 +133,14 @@ components:
         properties:
           id:
             type: integer
-      examples:
-        - name: CANCEL_ORDER
-          payload:
-            id: 10
     CancellationReference:
       name: CancellationReference
       title: A cancellation reference in response to a cancel order request
       contentType: application/json
+      correlationId:
+        $ref: "#/components/correlationIds/orderCorrelation"
+      headers:
+        $ref: '#/components/schemas/correlationHeaders'
       payload:
         type: object
         required:
@@ -147,9 +154,3 @@ components:
             enum:
               - COMPLETED
               - FAILED
-      examples:
-        - name: CANCEL_ORDER
-          payload:
-            reference: 345
-            status: COMPLETED
-
