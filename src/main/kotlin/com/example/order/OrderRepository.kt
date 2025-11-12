@@ -4,7 +4,9 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class OrderRepository {
-    private val orders = mutableListOf<Order>()
+    private val orders = mutableListOf(
+        Order(123, status = OrderStatus.SHIPPED)
+    )
 
     fun save(order: Order) {
         orders.add(order)

@@ -16,18 +16,22 @@ java {
 }
 
 repositories {
-    maven { url uri("lib") }
     mavenCentral()
     maven {
         url = uri("https://packages.confluent.io/maven/")
     }
+    maven {
+        url "https://repo.specmatic.io/releases"
+    }
 }
+
+ext['kafka.version'] = '3.9.1'
 
 dependencies {
     implementation ('org.springframework.boot:spring-boot-starter') {
         exclude group: 'ch.qos.logback', module: 'logback-classic'
     }
-    implementation 'org.springframework.kafka:spring-kafka:3.2.0'
+    implementation 'org.springframework.kafka:spring-kafka:3.3.7'
     implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude group: 'ch.qos.logback', module: 'logback-classic'
     }
@@ -37,8 +41,10 @@ dependencies {
 
     testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
-    testImplementation('io.specmatic.kafka:specmatic-kafka-min:0.31.1')
+    testImplementation('io.specmatic.async:specmatic-kafka:1.6.8')
     testImplementation 'org.testcontainers:testcontainers:1.18.3'
+    testImplementation("org.springframework.kafka:spring-kafka-test:3.3.7")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:3.5.4")
 }
 
 tasks.withType(KotlinCompile).configureEach {

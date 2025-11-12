@@ -1,43 +1,42 @@
 package com.example.order
 
-import io.specmatic.kafka.KafkaMock
-import io.specmatic.kafka.SpecmaticKafkaContractTest
+import io.specmatic.async.core.constants.AVAILABLE_SERVERS
+import io.specmatic.async.core.constants.OVERLAY_FILE
+import io.specmatic.kafka.test.SpecmaticKafkaContractTest
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import org.springframework.boot.SpringApplication
-import org.springframework.context.ConfigurableApplicationContext
+import org.junit.jupiter.api.TestInstance
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.kafka.test.EmbeddedKafkaBroker
+import org.springframework.kafka.test.EmbeddedKafkaZKBroker
 
-private const val IN_MEMORY_BROKER_HOST = "localhost"
-private const val IN_MEMORY_BROKER_PORT = 9092
-
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ContractTest : SpecmaticKafkaContractTest {
-    companion object {
-        private lateinit var context: ConfigurableApplicationContext
-        private lateinit var kafkaMock: KafkaMock
+    private lateinit var embeddedKafka: EmbeddedKafkaBroker
 
-        @JvmStatic
-        @BeforeAll
-        fun setup() {
-            System.setProperty("OVERLAY_FILE", "src/test/resources/spec_overlay.yaml")
-            System.setProperty("CONSUMER_GROUP_ID", "order-consumer-group-id")
-            kafkaMock = KafkaMock.startInMemoryBroker(IN_MEMORY_BROKER_HOST, IN_MEMORY_BROKER_PORT)
-            startApplication()
-        }
+    @BeforeAll
+    fun setup() {
+        embeddedKafka =
+            EmbeddedKafkaZKBroker(
+                1,
+                false,
+                "new-orders",
+                "wip-orders",
+                "to-be-cancelled-orders",
+                "cancelled-orders",
+                "accepted-orders",
+                "out-for-delivery-orders"
+            ).kafkaPorts(9092)
+        runCatching { embeddedKafka.afterPropertiesSet() }
+        System.setProperty(AVAILABLE_SERVERS, "localhost:9092")
+        System.setProperty(OVERLAY_FILE, "src/test/resources/spec_overlay.yaml")
+        Thread.sleep(1000)
+    }
 
-        @JvmStatic
-        @AfterAll
-        fun tearDown() {
-            stopApplication()
-            kafkaMock.stop()
-        }
-
-        private fun startApplication() {
-            context = SpringApplication.run(OrderServiceApplication::class.java)
-            Thread.sleep(7000)
-        }
-
-        private fun stopApplication() {
-            context.stop()
-        }
+    @AfterAll
+    fun tearDown() {
+        embeddedKafka.destroy()
+        Thread.sleep(200)
     }
 }

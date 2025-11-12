@@ -91,7 +91,7 @@ class OrderService(
 
     private fun sendMessageOnProcessCancellationTopic(order: Order) {
         val headers = RecordHeaders().apply {
-            add(RecordHeader("orderCorrelationId", "12345".toByteArray()))
+            add(RecordHeader("orderCorrelationId", "12345".toByteArray(Charsets.UTF_8)))
         }
         val cancellationMessage = """{"reference": ${order.id}, "status": "${order.status}"}"""
         val record = ProducerRecord<String, String>(CANCELLED_ORDERS_TOPIC, null, null, null, cancellationMessage, headers)
@@ -102,7 +102,7 @@ class OrderService(
 
     private fun sendMessageOnProcessOrderTopic(order: Order) {
         val headers = RecordHeaders().apply {
-            add(RecordHeader("orderCorrelationId", "12345".toByteArray()))
+            add(RecordHeader("orderCorrelationId", "12345".toByteArray(Charsets.UTF_8)))
         }
         val taskMessage =
             """{"id": ${order.id}, "totalAmount": ${order.totalAmount()}, "status": "${order.status}"}"""
