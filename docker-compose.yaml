@@ -12,14 +12,25 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:latest
+    hostname: kafka
     container_name: kafka
     ports:
       - "9092:9092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,INTERNAL://kafka:9093
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,INTERNAL://0.0.0.0:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
+
+  kafka-init:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - broker
+    networks:
+      - avro-app-network
+    volumes:
+      - ./create-topics.sh:/create-topics.sh
+    entrypoint: [ "sh", "/create-topics.sh" ]

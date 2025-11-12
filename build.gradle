@@ -42,9 +42,9 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
     testImplementation('io.specmatic.async:specmatic-kafka:1.6.8')
-    testImplementation 'org.testcontainers:testcontainers:1.18.3'
     testImplementation("org.springframework.kafka:spring-kafka-test:3.3.7")
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.5.4")
+    testImplementation "org.testcontainers:junit-jupiter:1.21.3"
 }
 
 tasks.withType(KotlinCompile).configureEach {
