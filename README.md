@@ -24,3 +24,23 @@ Thereby it demonstrates the [request reply pattern](https://www.asyncapi.com/doc
 ```
 
 You will now see a detailed HTML report in `build/reports/index.html` with the messages that were sent and received as part of the contract tests.
+
+## Run the contract tests using specmatic-kafka docker image
+
+1. Start the kafka broker using below command.
+   ```shell
+   docker compose up -d
+   ```
+2. Create the required topics in the running Kafka broker.
+   # Copy the topic creation script into the Kafka container and execute it:
+   docker cp create-topics.sh kafka:/tmp/create-topics.sh
+   docker exec kafka bash /tmp/create-topics.sh
+   ```
+3. Run the application.
+   ```shell
+   ./gradlew bootRun
+   ```
+4. Run the contract tests.
+   ```shell
+   docker run --network host -v "$PWD/specmatic.yaml:/usr/src/app/specmatic.yaml" -v "$PWD/src/test/resources/spec_overlay.yaml:/usr/src/app/spec_overlay.yaml" -v "$PWD/build/reports:/usr/src/app/build/reports" specmatic/specmatic-kafka test --broker localhost:9092 --overlay=spec_overlay.yaml
+   ```
