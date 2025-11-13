@@ -19,8 +19,17 @@ Thereby it demonstrates the [request reply pattern](https://www.asyncapi.com/doc
 * JDK 17+
 
 ## Run the tests
+
+### 1. Using Specmatic-JUnit Helper
+
 ```shell
-./gradlew clean test
+./gradlew test --tests="com.example.order.ContractTest"
+```
+
+### 2. Using TestContainers
+
+```shell
+./gradlew test --tests="com.example.order.ContractTestUsingTestContainer"
 ```
 
 You will now see a detailed HTML report in `build/reports/index.html` with the messages that were sent and received as part of the contract tests.
