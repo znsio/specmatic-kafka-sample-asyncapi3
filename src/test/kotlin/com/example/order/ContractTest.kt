@@ -1,7 +1,7 @@
 package com.example.order
 
 import io.specmatic.async.core.constants.AVAILABLE_SERVERS
-import io.specmatic.async.core.constants.OVERLAY_FILE
+import io.specmatic.async.core.constants.SPECMATIC_KAFKA_OVERLAY_FILE
 import io.specmatic.kafka.test.SpecmaticKafkaContractTest
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -30,7 +30,7 @@ class ContractTest : SpecmaticKafkaContractTest {
             ).kafkaPorts(9092)
         runCatching { embeddedKafka.afterPropertiesSet() }
         System.setProperty(AVAILABLE_SERVERS, "localhost:9092")
-        System.setProperty(OVERLAY_FILE, "src/test/resources/spec_overlay.yaml")
+        System.setProperty(SPECMATIC_KAFKA_OVERLAY_FILE, "src/test/resources/spec_overlay.yaml")
         Thread.sleep(1000)
     }
 
