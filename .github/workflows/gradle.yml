@@ -34,7 +34,7 @@ jobs:
       if: always() # Run even if tests fail
       with:
         name: ctrf-report
-        path: build/reports/specmatic/ctrf/*.json
+        path: build/reports/specmatic/kafka/ctrf/*.json
         retention-days: 5
     
     # Display CTRF test results
@@ -42,7 +42,7 @@ jobs:
       uses: ctrf-io/github-test-reporter@v1
       if: always() # Run even if tests fail
       with:
-        report-path: './build/reports/specmatic/ctrf/*.json'
+        report-path: './build/reports/specmatic/kafka/ctrf/*.json'
 
     - name: Save Specmatic license
       if: github.ref == 'refs/heads/main'
