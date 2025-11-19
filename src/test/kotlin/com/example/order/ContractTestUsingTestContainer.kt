@@ -79,8 +79,7 @@ class ContractTestUsingTestContainer {
     @Test
     fun specmaticContractTest() {
         testContainer.start()
-        val hasSucceeded =
-            testContainer.logs.contains("Starting test") && testContainer.logs.contains("Result: FAILED").not()
+        val hasSucceeded = testContainer.logs.contains("Failed: 0")
         assertThat(hasSucceeded).isTrue()
     }
 }
