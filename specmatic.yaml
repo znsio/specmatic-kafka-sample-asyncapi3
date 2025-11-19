@@ -4,3 +4,7 @@ contracts:
       url: "https://github.com/specmatic/specmatic-order-contracts.git"
     provides:
       - io/specmatic/examples/store/asyncapi/3_0_0/order_service_async_v4.yaml
+report:
+  formatters:
+    - type: ctrf
+
