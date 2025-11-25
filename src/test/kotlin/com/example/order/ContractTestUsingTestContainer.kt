@@ -72,7 +72,7 @@ class ContractTestUsingTestContainer {
                 "./build/reports/specmatic",
                 "/usr/src/app/build/reports/specmatic",
                 BindMode.READ_WRITE,
-            ).waitingFor(Wait.forLogMessage(".*The coverage report is generated.*", 1))
+            ).waitingFor(Wait.forLogMessage(".*Failed:.*", 1))
             .withNetworkMode("host")
             .withLogConsumer { print(it.utf8String) }
 
